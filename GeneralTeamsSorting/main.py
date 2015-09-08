@@ -71,7 +71,7 @@ while len(pairings) >= total/2:
     print (pairings)
     counter_week += 1
 
-for i in range(0,weeks):
-    for j in range(0,games):
-        print (calendar[j+i*games])
-    print ('>>>>')
+#for i in range(0,weeks):
+#    for j in range(0,games):
+#        print (calendar[j+i*games])
+#    print ('>>>>')
