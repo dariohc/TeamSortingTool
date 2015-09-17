@@ -1,14 +1,15 @@
 '''
 Created on 8 Sep 2015
-
+modified
 @author: Dario Hermida
 '''
-#it works only for 2**k (4,8,16,32, teams due to the sorting algorithm.
-#script to generate matches between teams
-#it is required to have all matches evenly distributed
+# it works only for 2**k (4,8,16,32, teams due to the sorting algorithm.
+# script to generate matches between teams
+# it is required to have all matches evenly distributed
+
 import random
 
-#variables
+# variables
 total = 14
 calendar = []
 pairings = []
@@ -16,13 +17,14 @@ games = int(total) // 2
 weeks = total - 1
 playing = []
  
-#for k in range(0,weeks+1):
-#    calendar.append(k)
+# for k in range(0,weeks+1):
+# calendar.append(k)
+
 
 def print_list(calendar):
     print ('......')
-    for k in range(0,len(calendar)):
-        print (calendar[k])
+    for k in range(0, len(calendar)):
+        print(calendar[k])
     print('.....')
 
 def check_team(aux_list):
