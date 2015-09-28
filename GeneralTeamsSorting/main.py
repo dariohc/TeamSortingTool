@@ -10,13 +10,16 @@ modified
 import random
 
 # variables
-total = 6
+total = 8
 calendar = []
 pairings = []
 games = int(total) // 2
 weeks = total - 1
 playing = []
 position = 0
+games_week = 0
+games_day = 0
+total_games_inserted = 0
 # for k in range(0,weeks+1):
 # calendar.append(k)
 
@@ -33,29 +36,42 @@ def print_list(aux_list):
 def insert_team(current_game):
     # returns True if there is a game
     print_list(calendar)
-    print(position)
-    global position
-    attempts = 0
+    global calendar, games_week, games_day, total_games_inserted
+    game_match = False
+    game_inserted = False
+    games_day = 0
+    games_week_attempts = 0
     print(current_game, 'this is my current game')
-    while attempts < weeks:
-        for ka in range(0, games):
-            if ((current_game[0] == calendar[position][ka][0]) or (current_game[0] == calendar[position][ka][1]) or
-               (current_game[1] == calendar[position][ka][0]) or (current_game[1] == calendar[position][ka][1])):
+    while games_week_attempts < weeks or (game_inserted == False):
+        while games_day < games:
+            print('this is my current game', current_game)
+            print('this is my comparison game', calendar[games_week][games_day])
+            if ((current_game[0] == calendar[games_week][games_day][0]) or
+                (current_game[0] == calendar[games_week][games_day][1]) or
+                (current_game[1] == calendar[games_week][games_day][0]) or
+                    (current_game[1] == calendar[games_week][games_day][1])) and (game_match == False):
                 print('there is a match')
-                position += 1
-                position %= 5
-                attempts += 1
-                print(position, 'this is the position')
-                continue
-            else:
-                calendar[position][ka] = search
+                game_match = True
+                print(games_week, games_day, 'this is the current position')
+            if (game_match == False) and (games_day == games - 1) and (game_inserted == False):
+                calendar[games_week].remove([total+1, total+1])
+                calendar[games_week].append(search)
+                game_inserted = True
+                games_week += 1
+                games_week %= weeks
                 print("added")
-                return
+                total_games_inserted += 1
+            games_day += 1
+            print('currently checking', games_week, games_day)
         print_list(calendar)
-        position += 1
-        position %= 5
-        attempts += 1
-        input('we are on the loop')
+        game_match = False
+        # input('we are on the loop')
+        print('we are on the week', games_week)
+        if game_inserted == False:
+            games_week += 1
+            games_week %= weeks
+        games_week_attempts += 1
+        games_day = 0
 
 
 def add_playing(aux_list):
@@ -98,7 +114,7 @@ counter_games = 0
 counter_week = 0
 backup_pairings = pairings
 input('please press a button')
-while len(pairings) >= 1:
+while len(pairings) > total_games_inserted:
     for search in pairings:
         insert_team(search)  # we iterate over the whole list of pairings
     input('please press a button')
