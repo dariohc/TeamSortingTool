@@ -10,7 +10,7 @@ modified
 import random
 
 # variables
-total = 12
+total = 14
 calendar = []
 pairings = []
 games = int(total) // 2
@@ -22,7 +22,11 @@ games_day = 0
 total_games_inserted = 0
 teams_names = []
 early_limit = games // 2
+early_limit_weeks = weeks // 2
 late_limit = games - early_limit
+late_limit_weeks = weeks - late_limit
+early_total = total
+late_total = total
 
 # for k in range(0,weeks+1):
 # calendar.append(k)
@@ -146,21 +150,40 @@ def present_full_calendar():
             print(current_game, '-', calendar[current_week][current_game])
 
 
-def present_early_players():
-    global calendar, games, weeks, early_limit
+def present_players():
+    global calendar, games, weeks, early_limit, early_limit_weeks, late_limit_weeks, early_total, late_total
     print(early_limit)
     early_list = []
+    late_list = []
+    early_total = 0
+    late_total = 0
     for current_week in range(0, weeks):
         for current_game in range(0, early_limit):
             early_list.append(calendar[current_week][current_game][0])
             early_list.append(calendar[current_week][current_game][1])
     for team in range(0, total):
-        if early_list.count(team) > early_limit:
-            print(team, 'this team is playing too early', 'total of', early_list.count(team), 'times')
+        if early_list.count(team) > early_limit_weeks + 1:
+            print(team, 'this team is playing too Early', 'total of', early_list.count(team), 'times')
+            early_total += 1
+    # this will be for the late players
+    for current_week in range(0, weeks):
+        for current_game in range(early_limit, games):
+            late_list.append(calendar[current_week][current_game][0])
+            late_list.append(calendar[current_week][current_game][1])
+    for team in range(0, total):
+        if late_list.count(team) > early_limit_weeks + 1:
+            print(team, 'this team is playing too Late', 'total of', late_list.count(team), 'times')
+            late_total += 1
+    print('--this is early total method', early_total)
+    print('--this is late total', late_total)
 
 
-print('this is my name_space', teams_names)
-print(games, weeks)
+def shuffle_calendar():
+    global calendar, weeks
+    for current_week in range(0, weeks):
+        calendar[current_week] = random.shuffle(calendar[current_week])
+
+
 for i in range(0, total):
         for j in range(0, total):
             if i != j and i < j:
@@ -184,13 +207,20 @@ while len(pairings) > total_games_inserted:
         insert_team(search)  # we iterate over the whole list of pairings
     # input('please press a button')
 
+
+present_players()
+while (early_total > early_limit_weeks + 2) or (late_total > late_limit_weeks + 2):
+    shuffle_calendar()
+    present_players()
+    print('--this is early total while', early_total)
+    print('--this is late total', late_total)
 print_list(calendar)
 print(len(calendar))
 verify_calendar()
-present_early_players()
+present_players()
 # here should be the place to verify
 print('calendar done')
-compile_team_names()
-apply_team_names()
-present_full_calendar()
-present_early_players()
+# compile_team_names()
+# apply_team_names()
+# present_full_calendar()
+# present_early_players()
