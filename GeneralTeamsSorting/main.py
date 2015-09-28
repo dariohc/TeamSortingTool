@@ -10,7 +10,7 @@ modified
 import random
 
 # variables
-total = 14
+total = 8
 calendar = []
 pairings = []
 games = int(total) // 2
@@ -27,6 +27,8 @@ late_limit = games - early_limit
 late_limit_weeks = weeks - late_limit
 early_total = total
 late_total = total
+max_early = 0
+max_late = 0
 
 # for k in range(0,weeks+1):
 # calendar.append(k)
@@ -151,8 +153,7 @@ def present_full_calendar():
 
 
 def present_players():
-    global calendar, games, weeks, early_limit, early_limit_weeks, late_limit_weeks, early_total, late_total
-    print(early_limit)
+    global calendar, games, weeks, early_limit, early_limit_weeks, late_limit_weeks, max_early, max_late
     early_list = []
     late_list = []
     early_total = 0
@@ -165,6 +166,9 @@ def present_players():
         if early_list.count(team) > early_limit_weeks + 1:
             print(team, 'this team is playing too Early', 'total of', early_list.count(team), 'times')
             early_total += 1
+            if early_list.count(team) > max_early:
+                max_early = early_list.count(team)
+
     # this will be for the late players
     for current_week in range(0, weeks):
         for current_game in range(early_limit, games):
@@ -174,14 +178,17 @@ def present_players():
         if late_list.count(team) > early_limit_weeks + 1:
             print(team, 'this team is playing too Late', 'total of', late_list.count(team), 'times')
             late_total += 1
+            if late_list.count(team) > max_late:
+                max_late = late_list.count(team)
     print('--this is early total method', early_total)
     print('--this is late total', late_total)
+    return early_total, late_total
 
 
 def shuffle_calendar():
     global calendar, weeks
     for current_week in range(0, weeks):
-        calendar[current_week] = random.shuffle(calendar[current_week])
+        random.shuffle(calendar[current_week])
 
 
 for i in range(0, total):
@@ -189,31 +196,32 @@ for i in range(0, total):
             if i != j and i < j:
                 pairings.append([i, j])
 initialize_calendar()
-
-# print('this is my pairings list')
-# print_list(pairings)
-# print(len(pairings))
-# print_list(calendar)
-
-# now we have al matches to be played
-# for weeks in range (0,weeks+1):
 counter_games = 0
 counter_week = 0
-backup_pairings = pairings
-# input('please press a button')
 while len(pairings) > total_games_inserted:
     for search in pairings:
         # verify_calendar()
         insert_team(search)  # we iterate over the whole list of pairings
     # input('please press a button')
-
-
-present_players()
-while (early_total > early_limit_weeks + 2) or (late_total > late_limit_weeks + 2):
+# print('this is just when created:')
+early_total, late_total = present_players()
+# shuffle_calendar()
+# print('this is after the shuffle')
+# print_list(calendar)
+print('this is my early_total', early_total)
+print('this is my early limit_weeks', early_limit_weeks)
+adjusting_parameter = 2
+while (abs(early_total - late_total) > 2) or ((early_total < early_limit_weeks + adjusting_parameter) and
+      (early_total > early_limit_weeks - adjusting_parameter)) or \
+      ((late_total < late_limit_weeks + adjusting_parameter) and
+      (late_total > early_limit_weeks - adjusting_parameter)) or (max_early > (early_limit_weeks + 2)) or\
+      (max_late > (late_limit_weeks + 2)):
     shuffle_calendar()
-    present_players()
-    print('--this is early total while', early_total)
-    print('--this is late total', late_total)
+    print_list(calendar)
+    # input('lets continue')
+    early_total, late_total = present_players()
+    print('checking early_total and late_total', early_total, late_total)
+    print('this is condition', abs(early_total - late_total))
 print_list(calendar)
 print(len(calendar))
 verify_calendar()
