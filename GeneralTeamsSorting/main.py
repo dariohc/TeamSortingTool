@@ -21,6 +21,9 @@ games_week = 0
 games_day = 0
 total_games_inserted = 0
 teams_names = []
+early_limit = games // 2
+late_limit = games - early_limit
+
 # for k in range(0,weeks+1):
 # calendar.append(k)
 
@@ -112,7 +115,7 @@ def verify_calendar():
         for k in range(0, total):
             # print(current_verify.count(k), 'the count for', k)
             if current_verify.count(k) > 1 or (current_verify.count(total + 1) > 1):
-                print('Calendar needs to be updated')
+                return 'there is a problem with the calendar'
         current_verify = []
 
 
@@ -130,7 +133,30 @@ def apply_team_names():
         for current_game in range(0, games):
             calendar[current_week][current_game][0] = teams_names[calendar[current_week][current_game][0]]
             calendar[current_week][current_game][1] = teams_names[calendar[current_week][current_game][1]]
-    print_list(calendar)
+    # print_list(calendar)
+
+
+def present_full_calendar():
+    global calendar, weeks, games
+    # counter_week = 0
+    # counter_games = 0
+    for current_week in range(0, weeks):
+        print('Games for the week', current_week)
+        for current_game in range(0, games):
+            print(current_game, '-', calendar[current_week][current_game])
+
+
+def present_early_players():
+    global calendar, games, weeks, early_limit
+    print(early_limit)
+    early_list = []
+    for current_week in range(0, weeks):
+        for current_game in range(0, early_limit):
+            early_list.append(calendar[current_week][current_game][0])
+            early_list.append(calendar[current_week][current_game][1])
+    for team in range(0, total):
+        if early_list.count(team) > early_limit:
+            print(team, 'this team is playing too early', 'total of', early_list.count(team), 'times')
 
 
 print('this is my name_space', teams_names)
@@ -141,10 +167,10 @@ for i in range(0, total):
                 pairings.append([i, j])
 initialize_calendar()
 
-print('this is my pairings list')
-print_list(pairings)     
-print(len(pairings))
-print_list(calendar)
+# print('this is my pairings list')
+# print_list(pairings)
+# print(len(pairings))
+# print_list(calendar)
 
 # now we have al matches to be played
 # for weeks in range (0,weeks+1):
@@ -154,14 +180,17 @@ backup_pairings = pairings
 # input('please press a button')
 while len(pairings) > total_games_inserted:
     for search in pairings:
-        verify_calendar()
+        # verify_calendar()
         insert_team(search)  # we iterate over the whole list of pairings
     # input('please press a button')
 
 print_list(calendar)
 print(len(calendar))
 verify_calendar()
+present_early_players()
+# here should be the place to verify
 print('calendar done')
 compile_team_names()
 apply_team_names()
-
+present_full_calendar()
+present_early_players()
