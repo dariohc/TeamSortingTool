@@ -10,7 +10,7 @@ modified
 import random
 
 # variables
-total = 8
+total = 14
 calendar = []
 pairings = []
 games = int(total) // 2
@@ -97,6 +97,22 @@ def initialize_calendar():
             calendar[i].remove(total+1)
             calendar[i].remove(total+1)
 
+
+def verify_calendar():
+    current_verify = []
+    global calendar
+    weeks = 0
+    games = 0
+    for weeks in range(0, weeks):
+        for games in range(0, games):
+            current_verify.append(calendar[weeks][games][0])
+            current_verify.append(calendar[weeks][games][1])
+        print('verifying this list', current_verify)
+        for k in range(0, total):
+            if current_verify.count(k) > 1:
+                print('there is a PROBLEM')
+        current_verify = []
+
 for i in range(0, total):
         for j in range(0, total):
             if i != j and i < j:
@@ -116,10 +132,12 @@ backup_pairings = pairings
 input('please press a button')
 while len(pairings) > total_games_inserted:
     for search in pairings:
+        verify_calendar()
         insert_team(search)  # we iterate over the whole list of pairings
     input('please press a button')
 
 print_list(calendar)
 print(len(calendar))
 check_games = []
+
 print(games, weeks)
