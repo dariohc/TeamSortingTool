@@ -2,18 +2,18 @@
 Created on 8 Sep 2015
 modified
 @author: Dario Hermida
+Taken a 'total' of teams, it is created a 'calendar' with all the matches to be played
+during a whole 1 round league. Matches are evenly distributed to have all teams playing
+the same amount of early and late games.
 '''
-# it works only for 2**k (4,8,16,32, teams due to the sorting algorithm.
-# script to generate matches between teams
-# it is required to have all matches evenly distributed
 
 import random
 
 # variables
-total = 8
-calendar = []
-pairings = []
-games = int(total) // 2
+total = 14  # it works fine for even numbers. For odd numbers just use one more team to rest.
+calendar = []  # it will contain the final calendar with [team A, team B] display.
+pairings = []  # initial list containing all matches to be played
+games = int(total) // 2  # games to be played during a week
 weeks = total - 1
 playing = []
 position = 0
@@ -22,16 +22,17 @@ games_day = 0
 total_games_inserted = 0
 teams_names = []
 early_limit = games // 2
-early_limit_weeks = weeks // 2
+early_limit_weeks = total // 2
 late_limit = games - early_limit
-late_limit_weeks = weeks - late_limit
+late_limit_weeks = total - late_limit
 early_total = total
 late_total = total
 max_early = 0
 max_late = 0
-
-# for k in range(0,weeks+1):
-# calendar.append(k)
+adjusting_parameter = 0
+max_iterations = 1000
+counter_games = 0
+counter_week = 0
 
 
 def print_list(aux_list):
@@ -158,31 +159,34 @@ def present_players():
     late_list = []
     early_total = 0
     late_total = 0
+    max_early = 0
+    max_late = 0
     for current_week in range(0, weeks):
         for current_game in range(0, early_limit):
             early_list.append(calendar[current_week][current_game][0])
             early_list.append(calendar[current_week][current_game][1])
+    # print('this is early_list', early_list)
     for team in range(0, total):
-        if early_list.count(team) > early_limit_weeks + 1:
+        if early_list.count(team) > early_limit_weeks:
             print(team, 'this team is playing too Early', 'total of', early_list.count(team), 'times')
             early_total += 1
             if early_list.count(team) > max_early:
                 max_early = early_list.count(team)
-
     # this will be for the late players
     for current_week in range(0, weeks):
         for current_game in range(early_limit, games):
             late_list.append(calendar[current_week][current_game][0])
             late_list.append(calendar[current_week][current_game][1])
+    # print('this is my late_list', late_list)
     for team in range(0, total):
-        if late_list.count(team) > early_limit_weeks + 1:
+        if late_list.count(team) > late_limit_weeks:
             print(team, 'this team is playing too Late', 'total of', late_list.count(team), 'times')
             late_total += 1
             if late_list.count(team) > max_late:
                 max_late = late_list.count(team)
-    print('--this is early total method', early_total)
-    print('--this is late total', late_total)
-    return early_total, late_total
+    # print('--this is early total method', early_total)
+    # print('--this is late total', late_total)
+    return max_early, max_late
 
 
 def shuffle_calendar():
@@ -191,44 +195,47 @@ def shuffle_calendar():
         random.shuffle(calendar[current_week])
 
 
+def compensate_calendar():
+    global max_early, max_late, early_limit_weeks, late_limit_weeks, adjusting_parameter, max_iterations
+    current_iterations = 0
+    while ((max_early > (early_limit_weeks + adjusting_parameter)) or \
+            (max_late > (late_limit_weeks + adjusting_parameter))) and current_iterations < max_iterations:
+        shuffle_calendar()
+        # print_list(calendar)
+        max_early, max_late = present_players()
+        print('checking max_early and max_late', max_early, max_late)
+        current_iterations += 1
+
+
+def perfect_calendar():
+    global max_early, max_late, early_limit_weeks, late_limit_weeks, adjusting_parameter, max_iterations
+    current_iterations = 0
+    while ((max_early != 0) or (max_late != 0)) and current_iterations < max_iterations:
+        shuffle_calendar()
+        # print_list(calendar)
+        max_early, max_late = present_players()
+        print('checking max_early and max_late', max_early, max_late)
+        current_iterations += 1
+
+
 for i in range(0, total):
         for j in range(0, total):
             if i != j and i < j:
                 pairings.append([i, j])
 initialize_calendar()
-counter_games = 0
-counter_week = 0
 while len(pairings) > total_games_inserted:
     for search in pairings:
-        # verify_calendar()
         insert_team(search)  # we iterate over the whole list of pairings
-    # input('please press a button')
-# print('this is just when created:')
 early_total, late_total = present_players()
-# shuffle_calendar()
-# print('this is after the shuffle')
-# print_list(calendar)
-print('this is my early_total', early_total)
-print('this is my early limit_weeks', early_limit_weeks)
-adjusting_parameter = 2
-while (abs(early_total - late_total) > 2) or ((early_total < early_limit_weeks + adjusting_parameter) and
-      (early_total > early_limit_weeks - adjusting_parameter)) or \
-      ((late_total < late_limit_weeks + adjusting_parameter) and
-      (late_total > early_limit_weeks - adjusting_parameter)) or (max_early > (early_limit_weeks + 2)) or\
-      (max_late > (late_limit_weeks + 2)):
-    shuffle_calendar()
-    print_list(calendar)
-    # input('lets continue')
-    early_total, late_total = present_players()
-    print('checking early_total and late_total', early_total, late_total)
-    print('this is condition', abs(early_total - late_total))
+# compensate_calendar()
+perfect_calendar()
+print('*****')
+print('*****This should be your calendar')
 print_list(calendar)
 print(len(calendar))
 verify_calendar()
 present_players()
-# here should be the place to verify
 print('calendar done')
-# compile_team_names()
-# apply_team_names()
-# present_full_calendar()
-# present_early_players()
+compile_team_names()
+apply_team_names()
+present_full_calendar()
