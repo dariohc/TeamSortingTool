@@ -14,28 +14,32 @@ total = 14  # it works fine for even numbers. For odd numbers just use one more 
 calendar = []  # it will contain the final calendar with [team A, team B] display.
 pairings = []  # initial list containing all matches to be played
 games = int(total) // 2  # games to be played during a week
-weeks = total - 1
+weeks = total - 1  # Enough weeks to play all matches
 playing = []
 position = 0
-games_week = 0
-games_day = 0
+games_week = 0  # used for presentation of the calendar
+games_day = 0  # used for presentation
 total_games_inserted = 0
-teams_names = []
-early_limit = games // 2
-early_limit_weeks = total // 2
+teams_names = []  # used for storing the real name of the teams
+early_limit = games // 2  # maximum allowed games to be played at early schedule
+early_limit_weeks = total // 2  # maximum allowed weeks to be played at early schedule
 late_limit = games - early_limit
 late_limit_weeks = total - late_limit
-early_total = total
+early_total = total  # total teams playing at early schedule
 late_total = total
-max_early = 0
+max_early = 0  # maximum games played by a team at early schedule, looping purposes
 max_late = 0
-adjusting_parameter = 0
-max_iterations = 1000
+adjusting_parameter = 0  # used to improve random nature of searching best solution
+max_iterations = 1000  # used to limit the search of the best calendar
 counter_games = 0
 counter_week = 0
 
 
 def print_list(aux_list):
+    '''
+    :param aux_list:
+    :return:
+    '''
     print('...printing list...')
     if len(aux_list) == 0:
         print('this list is empty')
